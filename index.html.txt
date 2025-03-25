@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>林博AI廚房 | 智能烹飪食材專賣</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --line-green: #06C755;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft JhengHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tagline {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .line-connect {
+            background-color: var(--line-green);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+        
+        .line-connect:hover {
+            background-color: #05a944;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .line-connect img {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+        
+        .search-filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 2rem;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .search-box input:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .filter-btn {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-image-container {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+        
+        .product-description {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            flex: 1;
+        }
+        
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+        }
+        
+        .product-origin {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        
+        .product-specs {
+            color: var(--gray);
+        }
+        
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--secondary);
+            margin-top: 10px;
+        }
+        
+        .product-line-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--line-green);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            z-index: 2;
+        }
+        
+        .product-line-btn:hover {
+            transform: scale(1.1);
+            background-color: #05a944;
+        }
+        
+        .product-line-btn img {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .no-results {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 50px 0;
+            color: var(--gray);
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .footer-line-btn {
+            background-color: var(--line-green);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .footer-line-btn:hover {
+            background-color: #05a944;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .footer-line-btn img {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+        
+        .contact-info {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .contact-info a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .contact-info a:hover {
+            color: var(--secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .search-filter-container {
+                flex-direction: column;
+            }
+            
+            .filter-buttons {
+                justify-content: center;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>林博AI廚房</h1>
+            <p class="tagline">智能烹飪，優質食材專賣</p>
+            <a href="https://line.me/R/ti/p/@334giled" class="line-connect" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="LINE">
+                加入LINE好友
+            </a>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="search-filter-container">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="搜尋產品名稱或描述...">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-category="all">全部商品</button>
+                <button class="filter-btn" data-category="魚">魚類</button>
+                <button class="filter-btn" data-category="牛肉">牛肉</button>
+                <button class="filter-btn" data-category="雞肉">雞肉</button>
+                <button class="filter-btn" data-category="豬肉">豬肉</button>
+            </div>
+        </div>
+        
+        <div class="products-grid" id="productsContainer">
+            <!-- 產品卡片將在這裡動態生成 -->
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <p>© 2023 林博AI廚房 版權所有</p>
+            <div class="contact-info">
+                電話: <a href="tel:0956522522">0956-522-522</a>
+            </div>
+            <a href="https://line.me/R/ti/p/@334giled" class="footer-line-btn" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="LINE">
+                聯絡我們
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        // 產品數據
+        const productData = [
+            {
+                name: "現撈那個魚",
+                description: "「那個魚」最常見的料理方法多以裹漿酥炸為主，藉由酥脆的外表，突顯魚肉滑溜透明類似果凍一般的質地，並搭配鹹香的胡椒鹽趁熱食用",
+                price: "70元/斤",
+                origin: "台灣",
+                specs: "1斤",
+                category: "魚",
+                imageUrl: "https://i.imgur.com/zc8yufG.jpg",
+                lineUrl: "https://line.me/R/ti/p/@334giled"
+            },
+            {
+                name: "澳洲頂級短牛肋",
+                description: "冷凍",
+                price: "260元",
+                origin: "澳洲",
+                specs: "500g",
+                category: "牛肉",
+                imageUrl: "https://i.imgur.com/10zg1Mv.jpg",
+                lineUrl: "https://line.me/R/ti/p/@334giled"
+            },
+            {
+                name: "大成黑羽全雞",
+                description: "冷凍（每隻一斤多）",
+                price: "90元/隻",
+                origin: "台灣",
+                specs: "750+-10%",
+                category: "雞肉",
+                imageUrl: "https://i.imgur.com/7tGruad.jpg",
+                lineUrl: "https://line.me/R/ti/p/@334giled"
+            },
+            {
+                name: "月亮軟骨",
+                description: "",
+                price: "110元/斤",
+                origin: "台灣",
+                specs: "1斤",
+                category: "豬肉",
+                imageUrl: "https://i.imgur.com/ls2Kmsf.jpg",
+                lineUrl: "https://line.me/R/ti/p/@334giled"
+            },
+            {
+                name: "嘴邊肉",
+                description: "",
+                price: "160元/斤",
+                origin: "台灣",
+                specs: "1斤",
+                category: "豬肉",
+                imageUrl: "https://i.imgur.com/mhvGMj1.jpg",
+                lineUrl: "https://line.me/R/ti/p/@334giled"
+            },
+            {
+                name: "梅花排骨",
+                description: "",
+                price: "100元/斤",
+                origin: "台灣",
+                specs: "1斤",
+                category: "豬肉",
+                imageUrl: "https://i.imgur.com/0jMAisQ.jpg",
+                lineUrl: "https://line.me/R/ti/p/@334giled"
+            },
+            {
+                name: "三層肉",
+                description: "",
+                price: "140元/斤",
+                origin: "台灣",
+                specs: "1斤",
+                category: "豬肉",
+                imageUrl: "https://i.imgur.com/Z3xDge0.jpg",
+                lineUrl: "https://line.me/R/ti/p/@334giled"
+            }
+        ];
+
+        // DOM 元素
+        const productsContainer = document.getElementById('productsContainer');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('searchInput');
+
+        // 初始渲染
+        renderProducts(productData);
+
+        // 篩選按鈕事件監聽
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 更新按鈕狀態
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // 獲取選中的分類
+                const category = button.dataset.category;
+                filterProducts(category, searchInput.value);
+            });
+        });
+
+        // 搜索輸入事件監聽
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
+            filterProducts(activeCategory, searchTerm);
+        });
+
+        // 篩選產品函數
+        function filterProducts(category, searchTerm = '') {
+            let filteredProducts = productData;
+            
+            // 按分類篩選
+            if (category !== 'all') {
+                filteredProducts = filteredProducts.filter(product => product.category === category);
+            }
+            
+            // 按搜索詞篩選
+            if (searchTerm) {
+                filteredProducts = filteredProducts.filter(product => 
+                    product.name.toLowerCase().includes(searchTerm) || 
+                    product.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // 重新渲染產品
+            renderProducts(filteredProducts);
+        }
+
+        // 渲染產品函數
+        function renderProducts(products) {
+            productsContainer.innerHTML = '';
+            
+            if (products.length === 0) {
+                productsContainer.innerHTML = '<div class="no-results">沒有找到符合條件的商品</div>';
+                return;
+            }
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                
+                productCard.innerHTML = `
+                    <div class="product-image-container">
+                        <img src="${product.imageUrl}" alt="${product.name}" class="product-image">
+                    </div>
+                    <a href="${product.lineUrl}" class="product-line-btn" target="_blank" title="LINE詢問">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="LINE">
+                    </a>
+                    <div class="product-info">
+                        <h3 class="product-name">${product.name}</h3>
+                        <p class="product-description">${product.description || '無描述'}</p>
+                        <div class="product-meta">
+                            <span class="product-origin">${product.origin}</span>
+                            <span class="product-specs">${product.specs}</span>
+                        </div>
+                        <div class="product-price">${product.price}</div>
+                    </div>
+                `;
+                
+                productsContainer.appendChild(productCard);
+            });
+        }
+    </script>
+</body>
+</html>
